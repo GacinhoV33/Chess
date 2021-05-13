@@ -11,9 +11,6 @@ p.init()
 screen = p.display.set_mode(BG_SIZE)
 clock = p.time.Clock()
 
-# ))chessboard_surface = p.image.load("images/chessboards/chessboard3.png").convert()
-# # chessboard_surface = p.transform.scale(chessboard_surface, (BG_SIZE[0], BG_SIZE[0] Probably not important
-
 
 class Figure:
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
@@ -26,29 +23,67 @@ class Figure:
         self.image = p.transform.scale(self.image, (int(BG_SIZE[0] / 8), int(BG_SIZE[0] / 8)))
         self.image_path = image_path
         self.figure_id = figure_id
+        self.circle_image = p.image.load("images/circle.png").convert_alpha()
+        self.circle_image = p.transform.scale(self.circle_image, (int(BG_SIZE[0]/24), int(BG_SIZE[0]/24)))
 
     def show_figure(self):
         screen.blit(self.image, self.actual_display_pos)
 
+    def show_possible_moves_on_board(self, chessboard):
+        for move in self.possible_moves(chessboard):
+            screen.blit(self.circle_image, self.convert_to_display_circle(move[0], move[1]))
+
     @abstractmethod
-    def possible_moves(self):
+    def possible_moves(self, chessboard):
         pass
 
     @classmethod
     def convert_to_display(cls, x: int, y: int):
+        """
+        Function convert coordinates to coordinates on chessboard
+        The coordinates are placed in the left-top corner of one chessboard field
+        :param x:
+        :param y:
+        :return: Tuple(int, int)
+        """
         return int((BG_SIZE[0] / 8) * (x - 1)), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1))
+
+    @classmethod
+    def convert_to_display_circle(cls, x: int, y: int):
+        """
+        Function convert coordinates to coordinates on chessboard
+        The middle of converted coordinates has place in the middle of one chessboard field
+        :param x:
+        :param y:
+        :return: Tuple(int, int)
+        """
+        return int((BG_SIZE[0] / 8) * (x - 1) + BG_SIZE[0]/24), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1) + BG_SIZE[0]/24)
 
 
 class Pawn(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
 
-    def possible_moves(self):
-        # super.__init__()
-        pass
-
-    def show_possible_moves_on_board(self):
-        pass
+    def possible_moves(self, chessboard):
+        """
+        function returns every possible positon on the board where figure might go
+        This not consider whether it's collide with other figures or not
+        :return: List[(x:int, y:int)]
+        """
+        if self.color == "white":
+            #TODO add attacking opponent
+            #TODO add limit of boards
+            if self.actual_pos == self.start_pos:
+                return [(self.actual_pos[0], self.actual_pos[1]+1), (self.actual_pos[0], self.actual_pos[1]+2)]
+            else:
+                return [(self.actual_pos[0], self.actual_pos[1] + 1)]
+        elif self.color == "black":
+            if self.actual_pos == self.start_pos:
+                return [(self.actual_pos[0], self.actual_pos[1]-1), (self.actual_pos[0], self.actual_pos[1]-2)]
+            else:
+                return [(self.actual_pos[0], self.actual_pos[1]-1)]
+        else:
+            raise ValueError("Wrong color type assigned")
 
     def make_move(self):
         pass
@@ -61,11 +96,8 @@ class Knight(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
 
-    def possible_moves(self):
+    def possible_moves(self, chessboard):
         # super.__init__()
-        pass
-
-    def show_possible_moves_on_board(self):
         pass
 
     def make_move(self):
@@ -79,11 +111,8 @@ class Bishop(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
 
-    def possible_moves(self):
+    def possible_moves(self, chessboard):
         # super.__init__()
-        pass
-
-    def show_possible_moves_on_board(self):
         pass
 
     def make_move(self):
@@ -102,11 +131,8 @@ class King(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
 
-    def possible_moves(self):
+    def possible_moves(self, chessboard):
         # super.__init__()
-        pass
-
-    def show_possible_moves_on_board(self):
         pass
 
     def make_move(self):
@@ -120,11 +146,8 @@ class Queen(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
 
-    def possible_moves(self):
+    def possible_moves(self, chessboard):
         # super.__init__()
-        pass
-
-    def show_possible_moves_on_board(self):
         pass
 
     def make_move(self):
@@ -141,21 +164,37 @@ class Field:
         self.size = (BG_SIZE[0]/8, BG_SIZE[0]/8)
         self.location = ((self.x-1) * BG_SIZE[0]/8, (self.y-1) * BG_SIZE[0]/8)
         self.is_free = True
+        self.figure = None
 
 
 class Chessboard:
     def __init__(self, image_path: str):
         self.surface = p.image.load(image_path).convert()
         self.surface = p.transform.scale(self.surface, (BG_SIZE[0], BG_SIZE[0]))
-        self.matrix = np.zeros((8, 8))
+        self.matrix = [[Field(i+1, j+1) for i in range(8)] for j in range(8)]
 
-    def init_chessboard(self):
-        #TODO
+    def init_chessboard(self, figures):
+        """
+        Function fill chessboard matrix with figures
+        It assigns specific figure to specific field on board and change status of field to not_free
+        :param figures:
+        :return:
+        """
+        for figure in figures:
+            self.matrix[figure.actual_pos[0]-1][figure.actual_pos[1]-1].is_free = False
+            self.matrix[figure.actual_pos[0]-1][figure.actual_pos[1]-1].figure = figure
         pass
 
 
     @classmethod
     def convert_to_display(cls, x: int, y: int):
+        """
+        Function convert coordinates to coordinates on chessboard
+        The middle of converted coordinates has place in the middle of one chessboard field
+        :param x:
+        :param y:
+        :return: Tuple(int, int)
+        """
         return (BG_SIZE[0] / 8) * (x - 1) + BG_SIZE[0] / 8 / 2, (BG_SIZE[0] / 8) * (y - 1) + BG_SIZE[0] / 8 / 2
 
 Chessboard_classic = Chessboard("images/chessboards/chessboard3.png")
@@ -209,7 +248,7 @@ All_figures = [Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8,
 
 
 Chessboard_type = Chessboard_classic
-
+Chessboard_type.init_chessboard(All_figures)
 
 while True:
     for event in p.event.get():
@@ -220,19 +259,8 @@ while True:
     screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
     for figure in All_figures:
         figure.show_figure()
-    # for pawn in White_pawns:
-    #     pawn.show_figure()
-    # for pawn in Black_pawns:
-    #     pawn.show_figure()
-    # for knight in White_knights:
-    #     knight.show_figure()
-    # for knight in Black_knights:
-    #     knight.show_figure()
-    # for bishop in White_bishops:
-    #     bishop.show_figure()
-    # for bishop in Black_bishops:
-    #     bishop.show_figure()
 
+    Pawn9.show_possible_moves_on_board(Chessboard_type)
 
     p.display.update()
     clock.tick(60)
