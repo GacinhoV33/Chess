@@ -31,10 +31,19 @@ class Figure:
 
     def show_possible_moves_on_board(self, chessboard):
         for move in self.possible_moves(chessboard):
-            screen.blit(self.circle_image, self.convert_to_display_circle(move[0], move[1]))
+            if chessboard.matrix[move[0]-1][move[1]-1].is_free:
+                screen.blit(self.circle_image, self.convert_to_display_circle(move[0], move[1]))
+            else:
+                #TODO highlight attacked figure
+                pass
 
     @abstractmethod
     def possible_moves(self, chessboard):
+        """
+        function returns every possible positon on the board where figure might go
+        This not consider whether it's collide with other figures or not
+        :return: List[(x:int, y:int)]
+        """
         pass
 
     @classmethod
@@ -59,17 +68,25 @@ class Figure:
         """
         return int((BG_SIZE[0] / 8) * (x - 1) + BG_SIZE[0]/24), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1) + BG_SIZE[0]/24)
 
+    @classmethod
+    def is_on_board(cls, x: int, y: int):
+        """
+        Function chceck whether given coordinates are inside the chessboard area
+        :param x:
+        :param y:
+        :return: Bool
+        """
+        if 1 <= x <= 8 and 1 <= y <= 8:
+            return True
+        else:
+            return False
+
 
 class Pawn(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
 
     def possible_moves(self, chessboard):
-        """
-        function returns every possible positon on the board where figure might go
-        This not consider whether it's collide with other figures or not
-        :return: List[(x:int, y:int)]
-        """
         if self.color == "white":
             #TODO add attacking opponent
             #TODO add limit of boards
@@ -97,8 +114,24 @@ class Knight(Figure):
         super().__init__(color, name, image_path, figure_id, x, y)
 
     def possible_moves(self, chessboard):
-        # super.__init__()
-        pass
+        poss_moves = list()
+        if self.is_on_board(self.actual_pos[0] + 2, self.actual_pos[1] + 1):
+            poss_moves.append((self.actual_pos[0] + 2, self.actual_pos[1] + 1))
+        if self.is_on_board(self.actual_pos[0] + 1, self.actual_pos[1] + 2):
+            poss_moves.append((self.actual_pos[0] + 1, self.actual_pos[1] + 2))
+        if self.is_on_board(self.actual_pos[0] + 2, self.actual_pos[1] - 1):
+            poss_moves.append((self.actual_pos[0] + 2, self.actual_pos[1] - 1))
+        if self.is_on_board(self.actual_pos[0] + 1, self.actual_pos[1] - 2):
+            poss_moves.append((self.actual_pos[0] + 1, self.actual_pos[1] - 2))
+        if self.is_on_board(self.actual_pos[0] - 1, self.actual_pos[1] - 2):
+            poss_moves.append((self.actual_pos[0] - 1, self.actual_pos[1] - 2))
+        if self.is_on_board(self.actual_pos[0] - 2, self.actual_pos[1] - 1):
+            poss_moves.append((self.actual_pos[0] -2, self.actual_pos[1] - 1))
+        if self.is_on_board(self.actual_pos[0] - 2, self.actual_pos[1] + 1):
+            poss_moves.append((self.actual_pos[0] -2, self.actual_pos[1] + 1))
+        if self.is_on_board(self.actual_pos[0] - 1, self.actual_pos[1] + 2):
+            poss_moves.append((self.actual_pos[0] - 1, self.actual_pos[1] + 2))
+        return poss_moves
 
     def make_move(self):
         pass
@@ -112,8 +145,29 @@ class Bishop(Figure):
         super().__init__(color, name, image_path, figure_id, x, y)
 
     def possible_moves(self, chessboard):
-        # super.__init__()
-        pass
+        poss_moves = list()
+        i = 1
+        while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] + i) and chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] + i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] + i))
+            i += 1
+
+        i = 1
+        while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] - i) and chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] - i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] - i))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] - i) and \
+                chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] - i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] - i))
+            i += 1
+
+        i = 1
+
+        while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] + i) and \
+                chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] + i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] + i))
+            i += 1
+        return poss_moves
 
     def make_move(self):
         pass
@@ -123,8 +177,38 @@ class Bishop(Figure):
 
 
 class Rook(Figure):
-    def __init__(self, color: str, name:str, image_path: str, figure_id: int, x: int, y: int):
+    def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
+
+    def possible_moves(self, chessboard):
+        poss_moves = list()
+        i = 1
+        while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1]) and \
+                chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] - 1].is_free:
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1]))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1]) and \
+                chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] - 1].is_free:
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1]))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0], self.actual_pos[1] + i) and \
+                chessboard.matrix[self.actual_pos[0] - 1][self.actual_pos[1] + i - 1].is_free:
+            poss_moves.append((self.actual_pos[0], self.actual_pos[1] + i))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0], self.actual_pos[1] - i) and \
+                chessboard.matrix[self.actual_pos[0] - 1][self.actual_pos[1] - i - 1].is_free:
+            poss_moves.append((self.actual_pos[0], self.actual_pos[1] - i))
+            i += 1
+        return poss_moves
+
+    def make_move(self):
+        pass
+
+    def remove_figure(self):
+        pass
 
 
 class King(Figure):
@@ -132,8 +216,24 @@ class King(Figure):
         super().__init__(color, name, image_path, figure_id, x, y)
 
     def possible_moves(self, chessboard):
-        # super.__init__()
-        pass
+        poss_moves = list()
+        if self.is_on_board(self.actual_pos[0] + 1, self.actual_pos[1] + 1):
+            poss_moves.append((self.actual_pos[0] + 1, self.actual_pos[1] + 1))
+        if self.is_on_board(self.actual_pos[0] + 1, self.actual_pos[1]):
+            poss_moves.append((self.actual_pos[0] + 1, self.actual_pos[1]))
+        if self.is_on_board(self.actual_pos[0], self.actual_pos[1] + 1):
+            poss_moves.append((self.actual_pos[0], self.actual_pos[1] + 1))
+        if self.is_on_board(self.actual_pos[0] + 1, self.actual_pos[1] - 1):
+            poss_moves.append((self.actual_pos[0] + 1, self.actual_pos[1] - 1))
+        if self.is_on_board(self.actual_pos[0] - 1, self.actual_pos[1] + 1):
+            poss_moves.append((self.actual_pos[0] - 1, self.actual_pos[1] + 1))
+        if self.is_on_board(self.actual_pos[0] - 1, self.actual_pos[1] - 1):
+            poss_moves.append((self.actual_pos[0] - 1, self.actual_pos[1] - 1))
+        if self.is_on_board(self.actual_pos[0] - 1, self.actual_pos[1]):
+            poss_moves.append((self.actual_pos[0] - 1, self.actual_pos[1]))
+        if self.is_on_board(self.actual_pos[0], self.actual_pos[1] - 1):
+            poss_moves.append((self.actual_pos[0], self.actual_pos[1] - 1))
+        return poss_moves
 
     def make_move(self):
         pass
@@ -147,8 +247,48 @@ class Queen(Figure):
         super().__init__(color, name, image_path, figure_id, x, y)
 
     def possible_moves(self, chessboard):
-        # super.__init__()
-        pass
+        poss_moves = list()
+        i = 1
+        while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1]) and \
+                chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] - 1].is_free:
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1]))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1]) and \
+                chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] - 1].is_free:
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1]))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0], self.actual_pos[1] + i) and \
+                chessboard.matrix[self.actual_pos[0] - 1][self.actual_pos[1] + i - 1].is_free:
+            poss_moves.append((self.actual_pos[0], self.actual_pos[1] + i))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0], self.actual_pos[1] - i) and \
+                chessboard.matrix[self.actual_pos[0] - 1][self.actual_pos[1] - i - 1].is_free:
+            poss_moves.append((self.actual_pos[0], self.actual_pos[1] - i))
+            i += 1
+        while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] + i) and \
+                chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] + i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] + i))
+            i += 1
+
+        i = 1
+        while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] - i) and \
+                chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] - i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] - i))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] - i) and \
+                chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] - i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] - i))
+            i += 1
+        i = 1
+        while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] + i) and \
+                chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] + i - 1].is_free:
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] + i))
+            i += 1
+        return poss_moves
 
     def make_move(self):
         pass
@@ -162,9 +302,10 @@ class Field:
         self.x = x
         self.y = y
         self.size = (BG_SIZE[0]/8, BG_SIZE[0]/8)
-        self.location = ((self.x-1) * BG_SIZE[0]/8, (self.y-1) * BG_SIZE[0]/8)
+        self.location = ((self.x-1) * BG_SIZE[0]/8, BG_SIZE[0] + (BG_SIZE[1] - BG_SIZE[0])/2 - (self.y-1) * BG_SIZE[0]/8)
         self.is_free = True
         self.figure = None
+        # self.area = TODO detect clicking here
 
 
 class Chessboard:
@@ -183,7 +324,7 @@ class Chessboard:
         for figure in figures:
             self.matrix[figure.actual_pos[0]-1][figure.actual_pos[1]-1].is_free = False
             self.matrix[figure.actual_pos[0]-1][figure.actual_pos[1]-1].figure = figure
-        pass
+
 
 
     @classmethod
@@ -246,7 +387,6 @@ All_figures = [Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8,
                Knight1, Knight2, Knight3, Knight4, Bishop1, Bishop2, Bishop3, Bishop4,
                Queen1, Queen2, King1, King2, Rook1, Rook2, Rook3, Rook4]
 
-
 Chessboard_type = Chessboard_classic
 Chessboard_type.init_chessboard(All_figures)
 
@@ -256,11 +396,17 @@ while True:
             #TODO Show request: "Do you really wanna quit?"
             p.quit()
             sys.exit()
+        if event.type == p.MOUSEBUTTONUP:
+            click_pos = p.mouse.get_pos()
+            print(click_pos)
     screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
+
+
+
     for figure in All_figures:
         figure.show_figure()
 
-    Pawn9.show_possible_moves_on_board(Chessboard_type)
+    King2.show_possible_moves_on_board(Chessboard_type)
 
     p.display.update()
     clock.tick(60)
