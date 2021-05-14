@@ -1,8 +1,9 @@
-from abc import abstractmethod
+
+
+import sys
 
 import pygame as p
-import sys
-import numpy as np
+from classes import Figure
 
 BG_SIZE = (800, 1000)
 
@@ -11,75 +12,76 @@ p.init()
 screen = p.display.set_mode(BG_SIZE)
 clock = p.time.Clock()
 
+#
+# class Figure:
+#     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
+#         self.color = color
+#         self.name = name
+#         self.start_pos = (x, y)
+#         self.actual_pos = (self.start_pos[0], self.start_pos[1])
+#         self.actual_display_pos = self.convert_to_display(self.start_pos[0], self.start_pos[1])
+#         self.image = p.image.load(image_path).convert_alpha()
+#         self.image = p.transform.scale(self.image, (int(BG_SIZE[0] / 8), int(BG_SIZE[0] / 8)))
+#         self.image_path = image_path
+#         self.figure_id = figure_id
+#         self.circle_image = p.image.load("images/circle.png").convert_alpha()
+#         self.circle_image = p.transform.scale(self.circle_image, (int(BG_SIZE[0]/24), int(BG_SIZE[0]/24)))
+#
+#     def show_figure(self):
+#         screen.blit(self.image, self.actual_display_pos)
+#
+#     def show_possible_moves_on_board(self, chessboard):
+#         for move in self.possible_moves(chessboard):
+#             if chessboard.matrix[move[0]-1][move[1]-1].is_free:
+#                 screen.blit(self.circle_image, self.convert_to_display_circle(move[0], move[1]))
+#             else:
+#                 #TODO highlight attacked figure
+#                 pass
 
-class Figure:
-    def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
-        self.color = color
-        self.name = name
-        self.start_pos = (x, y)
-        self.actual_pos = (self.start_pos[0], self.start_pos[1])
-        self.actual_display_pos = self.convert_to_display(self.start_pos[0], self.start_pos[1])
-        self.image = p.image.load(image_path).convert_alpha()
-        self.image = p.transform.scale(self.image, (int(BG_SIZE[0] / 8), int(BG_SIZE[0] / 8)))
-        self.image_path = image_path
-        self.figure_id = figure_id
-        self.circle_image = p.image.load("images/circle.png").convert_alpha()
-        self.circle_image = p.transform.scale(self.circle_image, (int(BG_SIZE[0]/24), int(BG_SIZE[0]/24)))
-
-    def show_figure(self):
-        screen.blit(self.image, self.actual_display_pos)
-
-    def show_possible_moves_on_board(self, chessboard):
-        for move in self.possible_moves(chessboard):
-            if chessboard.matrix[move[0]-1][move[1]-1].is_free:
-                screen.blit(self.circle_image, self.convert_to_display_circle(move[0], move[1]))
-            else:
-                #TODO highlight attacked figure
-                pass
-
-    @abstractmethod
-    def possible_moves(self, chessboard):
-        """
-        function returns every possible positon on the board where figure might go
-        This not consider whether it's collide with other figures or not
-        :return: List[(x:int, y:int)]
-        """
-        pass
-
-    @classmethod
-    def convert_to_display(cls, x: int, y: int):
-        """
-        Function convert coordinates to coordinates on chessboard
-        The coordinates are placed in the left-top corner of one chessboard field
-        :param x:
-        :param y:
-        :return: Tuple(int, int)
-        """
-        return int((BG_SIZE[0] / 8) * (x - 1)), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1))
-
-    @classmethod
-    def convert_to_display_circle(cls, x: int, y: int):
-        """
-        Function convert coordinates to coordinates on chessboard
-        The middle of converted coordinates has place in the middle of one chessboard field
-        :param x:
-        :param y:
-        :return: Tuple(int, int)
-        """
-        return int((BG_SIZE[0] / 8) * (x - 1) + BG_SIZE[0]/24), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1) + BG_SIZE[0]/24)
-
-    @classmethod
-    def is_on_board(cls, x: int, y: int):
-        """
-        Function chceck whether given coordinates are inside the chessboard area
-        :param x:
-        :param y:
-        :return: Bool
-        """
-        if 1 <= x <= 8 and 1 <= y <= 8:
-            return True
-        else:
-            return False
+    # @abstractmethod
+    # def possible_moves(self, chessboard):
+    #     """
+    #     function returns every possible positon on the board where figure might go
+    #     This not consider whether it's collide with other figures or not
+    #     :return: List[(x:int, y:int)]
+    #     """
+    #     pass
+    #
+    # @classmethod
+    # def convert_to_display(cls, x: int, y: int):
+    #     """
+    #     Function convert coordinates to coordinates on chessboard
+    #     The coordinates are placed in the left-top corner of one chessboard field
+    #     :param x:
+    #     :param y:
+    #     :return: Tuple(int, int)
+    #     """
+    #     return int((BG_SIZE[0] / 8) * (x - 1)), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1))
+    #
+    # @classmethod
+    # def convert_to_display_circle(cls, x: int, y: int):
+    #     """
+    #     Function convert coordinates to coordinates on chessboard
+    #     The middle of converted coordinates has place in the middle of one chessboard field
+    #     :param x:
+    #     :param y:
+    #     :return: Tuple(int, int)
+    #     """
+    #     return int((BG_SIZE[0] / 8) * (x - 1) + BG_SIZE[0]/24), int(BG_SIZE[0] - (BG_SIZE[0] / 8) * (y - 1) + BG_SIZE[0]/24)
+    #
+    # @classmethod
+    # def is_on_board(cls, x: int, y: int):
+    #     """
+    #     Function chceck whether given coordinates are inside the chessboard area
+    #     :param x:
+    #     :param y:
+    #     :return: Bool
+    #     """
+    #     if 1 <= x <= 8 and 1 <= y <= 8:
+    #         return True
+    #     else:
+    #         return False
+    #
 
 
 class Pawn(Figure):
@@ -305,7 +307,14 @@ class Field:
         self.location = ((self.x-1) * BG_SIZE[0]/8, BG_SIZE[0] + (BG_SIZE[1] - BG_SIZE[0])/2 - (self.y-1) * BG_SIZE[0]/8)
         self.is_free = True
         self.figure = None
-        # self.area = TODO detect clicking here
+
+    def is_in_area(self, mouse_position: tuple):
+        height = BG_SIZE[0] + (BG_SIZE[1]-BG_SIZE[0])/2
+        if (self.x -1) * BG_SIZE[0]/8 < mouse_position[0] < self.x * BG_SIZE[0]/8 \
+                and height - (self.y-1)*BG_SIZE[0]/8 > mouse_position[1] > height - self.y*BG_SIZE[0]/8:
+            return True
+        else:
+            return False
 
 
 class Chessboard:
@@ -399,9 +408,11 @@ while True:
         if event.type == p.MOUSEBUTTONUP:
             click_pos = p.mouse.get_pos()
             print(click_pos)
+            for column in Chessboard_type.matrix:
+                for field in column:
+                    if field.is_in_area(click_pos):
+                        print("detected: ", field.x, ":", field.y)
     screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
-
-
 
     for figure in All_figures:
         figure.show_figure()
