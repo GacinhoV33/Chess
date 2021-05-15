@@ -4,6 +4,7 @@ import pygame as p
 from config import BG_SIZE
 from abc import abstractmethod
 
+
 class Figure:
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         self.color = color
@@ -17,6 +18,7 @@ class Figure:
         self.figure_id = figure_id
         self.circle_image = p.image.load("images/circle.png").convert_alpha()
         self.circle_image = p.transform.scale(self.circle_image, (int(BG_SIZE[0]/24), int(BG_SIZE[0]/24)))
+        self.value = None
 
     def show_figure(self, screen):
         screen.blit(self.image, self.actual_display_pos)
@@ -37,6 +39,7 @@ class Figure:
         :return: List[(x:int, y:int)]
         """
         pass
+
 
     @classmethod
     def convert_to_display(cls, x: int, y: int):

@@ -6,6 +6,7 @@ from Figure import Figure
 class Pawn(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
+        self.value = 1
 
     def possible_moves(self, chessboard):
         if self.color == "white":

@@ -9,7 +9,7 @@ from Queen import Queen
 from King import King
 from Chessboard import Chessboard
 from config import BG_SIZE, clock_tick_ratio
-
+from Player import Player
 
 
 p.init()
@@ -17,6 +17,10 @@ screen = p.display.set_mode(BG_SIZE)
 clock = p.time.Clock()
 
 Chessboard_classic = Chessboard("images/chessboards/chessboard3.png")
+
+White_player = Player("white")
+Black_player = Player("black")
+
 #                                                       Szerokość---Wysokość
 Pawn1 = Pawn("white", "PawnA2", "images/figures/white_pawn.png", 1, 1, 2)
 Pawn2 = Pawn("white", "PawnB2", "images/figures/white_pawn.png", 2, 2, 2)
@@ -60,13 +64,14 @@ Black_knights = [Knight3, Knight4]
 White_bishops = [Bishop1, Bishop2]
 Black_bishops = [Bishop3, Bishop4]
 
-All_figures = [Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8,
+All_figures = [Pawn1, Pawn2,  Pawn4,  Pawn6, Pawn7, Pawn8,
                Pawn9, Pawn10, Pawn11, Pawn12, Pawn13, Pawn14, Pawn15, Pawn16,
                Knight1, Knight2, Knight3, Knight4, Bishop1, Bishop2, Bishop3, Bishop4,
                Queen1, Queen2, King1, King2, Rook1, Rook2, Rook3, Rook4]
 
 Chessboard_type = Chessboard_classic
 Chessboard_type.init_chessboard(All_figures)
+
 
 while True:
     for event in p.event.get():
@@ -80,13 +85,13 @@ while True:
             for column in Chessboard_type.matrix:
                 for field in column:
                     if field.is_in_area(click_pos):
-                        print("detected: ", field.x, ":", field.y)
+                        print("detected: ", field.x, ":", field.y)  
     screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
 
     for figure in All_figures:
         figure.show_figure(screen)
 
-    King2.show_possible_moves_on_board(Chessboard_type, screen)
+    Queen1.show_possible_moves_on_board(Chessboard_type, screen)
 
     p.display.update()
     clock.tick(clock_tick_ratio)

@@ -6,6 +6,7 @@ from Figure import Figure
 class Knight(Figure):
     def __init__(self, color: str, name: str, image_path: str, figure_id: int, x: int, y: int):
         super().__init__(color, name, image_path, figure_id, x, y)
+        self.value = 3
 
     def possible_moves(self, chessboard):
         poss_moves = list()
