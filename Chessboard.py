@@ -9,7 +9,7 @@ class Chessboard:
     def __init__(self, image_path: str):
         self.surface = p.image.load(image_path).convert()
         self.surface = p.transform.scale(self.surface, (BG_SIZE[0], BG_SIZE[0]))
-        self.matrix = [[Field(i+1, j+1) for i in range(8)] for j in range(8)]
+        self.matrix = [[Field(i+1, j+1) for j in range(8)] for i in range(8)]
 
     def init_chessboard(self, figures):
         """

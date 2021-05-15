@@ -8,9 +8,10 @@ from Bishop import Bishop
 from Queen import Queen
 from King import King
 from Chessboard import Chessboard
+from Game import Game
 from config import BG_SIZE, clock_tick_ratio
 
-
+game = Game()
 
 p.init()
 screen = p.display.set_mode(BG_SIZE)
@@ -68,6 +69,11 @@ All_figures = [Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8,
 Chessboard_type = Chessboard_classic
 Chessboard_type.init_chessboard(All_figures)
 
+screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0]) / 2))
+for figure in All_figures:
+    figure.show_figure(screen)
+p.display.update()
+
 while True:
     for event in p.event.get():
         if event.type == p.QUIT:
@@ -75,18 +81,24 @@ while True:
             p.quit()
             sys.exit()
         if event.type == p.MOUSEBUTTONDOWN:
+            game.state = "figure_chosen"
             click_pos = p.mouse.get_pos()
             print(click_pos)
             for column in Chessboard_type.matrix:
                 for field in column:
                     if field.is_in_area(click_pos):
                         print("detected: ", field.x, ":", field.y)
+                        field.figure.show_possible_moves_on_board(Chessboard_type, screen)
+                        p.display.update()
+                        p.time.wait(3000)
+                        game.end_of_turn = True
     screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
 
     for figure in All_figures:
         figure.show_figure(screen)
 
-    King2.show_possible_moves_on_board(Chessboard_type, screen)
+    # King2.show_possible_moves_on_board(Chessboard_type, screen)
 
-    p.display.update()
+    if game.end_of_turn:
+        p.display.update()
     clock.tick(clock_tick_ratio)
