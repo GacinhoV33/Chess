@@ -1,7 +1,13 @@
 import sys
 
 import pygame as p
-from classes import Pawn, Knight, Rook, Bishop, Queen, King, Chessboard
+from Pawn import Pawn
+from Knight import Knight
+from Rook import Rook
+from Bishop import Bishop
+from Queen import Queen
+from King import King
+from Chessboard import Chessboard
 from config import BG_SIZE, clock_tick_ratio
 
 
@@ -78,9 +84,9 @@ while True:
     screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
 
     for figure in All_figures:
-        figure.show_figure()
+        figure.show_figure(screen)
 
-    King2.show_possible_moves_on_board(Chessboard_type)
+    King2.show_possible_moves_on_board(Chessboard_type, screen)
 
     p.display.update()
     clock.tick(clock_tick_ratio)
