@@ -28,8 +28,5 @@ class Knight(Figure):
             poss_moves.append((self.actual_pos[0] - 1, self.actual_pos[1] + 2))
         return poss_moves
 
-    def make_move(self):
-        pass
-
     def remove_figure(self):
         pass

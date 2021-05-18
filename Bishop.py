@@ -33,9 +33,6 @@ class Bishop(Figure):
             i += 1
         return poss_moves
 
-    def make_move(self):
-        pass
-
     def remove_figure(self):
         pass
 

@@ -11,7 +11,7 @@ class Figure:
         self.name = name
         self.start_pos = (x, y)
         self.actual_pos = (self.start_pos[0], self.start_pos[1])
-        self.actual_display_pos = self.convert_to_display(self.start_pos[0], self.start_pos[1])
+        self.actual_display_pos = self.convert_to_display(self.actual_pos[0], self.actual_pos[1])
         self.image = p.image.load(image_path).convert_alpha()
         self.image = p.transform.scale(self.image, (int(BG_SIZE[0] / 8), int(BG_SIZE[0] / 8)))
         self.image_path = image_path
@@ -31,6 +31,12 @@ class Figure:
                 #TODO highlight attacked figure
                 pass
 
+    def make_move(self, x: int, y: int, chessboard):
+        chessboard.matrix[x-1][y-1].is_free = True
+        chessboard.matrix[x-1][y-1].figure = None
+        self.actual_pos = (x, y)
+        self.actual_display_pos = self.convert_to_display(self.actual_pos[0], self.actual_pos[1])
+
     @abstractmethod
     def possible_moves(self, chessboard):
         """
@@ -39,7 +45,6 @@ class Figure:
         :return: List[(x:int, y:int)]
         """
         pass
-
 
     @classmethod
     def convert_to_display(cls, x: int, y: int):

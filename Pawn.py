@@ -24,8 +24,5 @@ class Pawn(Figure):
         else:
             raise ValueError("Wrong color type assigned")
 
-    def make_move(self):
-        pass
-
     def remove_figure(self):
         pass

@@ -71,39 +71,84 @@ All_figures = [Pawn1, Pawn2,  Pawn4,  Pawn6, Pawn7, Pawn8,
                Knight1, Knight2, Knight3, Knight4, Bishop1, Bishop2, Bishop3, Bishop4,
                Queen1, Queen2, King1, King2, Rook1, Rook2, Rook3, Rook4]
 
-Chessboard_type = Chessboard_classic
-Chessboard_type.init_chessboard(All_figures)
+Board = Chessboard_classic
+Board.init_chessboard(All_figures)
+Actual_figure = None
 
-screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0]) / 2))
+screen.blit(Board.surface, (0, (BG_SIZE[1] - BG_SIZE[0]) / 2))
 for figure in All_figures:
     figure.show_figure(screen)
 p.display.update()
 
 while True:
+    All_figures = [Pawn1, Pawn2, Pawn4, Pawn6, Pawn7, Pawn8,
+                   Pawn9, Pawn10, Pawn11, Pawn12, Pawn13, Pawn14, Pawn15, Pawn16,
+                   Knight1, Knight2, Knight3, Knight4, Bishop1, Bishop2, Bishop3, Bishop4,
+                   Queen1, Queen2, King1, King2, Rook1, Rook2, Rook3, Rook4]
+
     for event in p.event.get():
         if event.type == p.QUIT:
             #TODO Show request: "Do you really wanna quit?"
             p.quit()
             sys.exit()
         if event.type == p.MOUSEBUTTONDOWN:
-            game.state = "figure_chosen"
+            print(Board.matrix[2][2].is_free)
             click_pos = p.mouse.get_pos()
-            print(click_pos)
-            for column in Chessboard_type.matrix:
-                for field in column:
-                    if field.is_in_area(click_pos):
-                        print("detected: ", field.x, ":", field.y)
-                        field.figure.show_possible_moves_on_board(Chessboard_type, screen)
-                        p.display.update()
-                        p.time.wait(3000)
-                        game.end_of_turn = True
-    screen.blit(Chessboard_type.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
+            if game.state == 0:
+                for column in Board.matrix:
+                    for field in column:
+                        if field.is_in_area(click_pos) and not field.is_free:
+                            print("detected: ", field.x, ":", field.y)
+                            if field.figure.color == game.player_turn:
+                                Actual_figure = field.figure
+                                game.state = 1
+
+            elif game.state == 1:
+                check_flag = True
+                for column in Board.matrix:
+                    for field in column:
+                        if field.is_in_area(click_pos) and (field.x, field.y) in Actual_figure.possible_moves(Board):
+                            Actual_figure.make_move(field.x, field.y, Board)
+
+                            game.update_chessboard(Board, All_figures)
+                            Actual_figure = None
+                            game.state = 0
+                            check_flag = not check_flag
+                if check_flag:
+                    game.state = 0
+                    Actual_figure = None
+
+
+            else:
+                raise ValueError("ERROR")
+            # game.state = "figure_chosen"
+            # click_pos = p.mouse.get_pos()
+            # print(click_pos)
+            # for column in Board.matrix:
+            #     for field in column:
+            #         if field.is_in_area(click_pos):
+            #             print("detected: ", field.x, ":", field.y)
+            #             field.figure.show_possible_moves_on_board(Board, screen)
+            #             p.display.update()
+            #             # p.time.wait(3000)
+            #             game.end_of_turn = True
+    screen.blit(Board.surface, (0, (BG_SIZE[1] - BG_SIZE[0])/2))
 
     for figure in All_figures:
         figure.show_figure(screen)
 
-    # King2.show_possible_moves_on_board(Chessboard_type, screen)
+    if Actual_figure:
+        Actual_figure.show_possible_moves_on_board(Board, screen)
+    # King2.show_possible_moves_on_board(Board, screen)
 
-    if game.end_of_turn:
-        p.display.update()
+    # if game.end_of_turn:
+    p.display.update()
     clock.tick(clock_tick_ratio)
+
+
+
+
+
+#TODO
+# 1) Problem with assignig information to Board
+# 2) Mechanics a lot to do :D

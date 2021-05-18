@@ -5,10 +5,10 @@
 class Player:
 
     def __init__(self, color: str):
+        self.player_figures = list()
         self.score = self.get_score()
         self.color = color
         self.is_on_move = True if self.color == "white" else False
-        self.player_figures = list()
 
     def get_figures_on_chessboard(self, chessboard):
         for row in chessboard.matrix:

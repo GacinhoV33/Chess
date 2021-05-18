@@ -28,8 +28,5 @@ class King(Figure):
             poss_moves.append((self.actual_pos[0], self.actual_pos[1] - 1))
         return poss_moves
 
-    def make_move(self):
-        pass
-
     def remove_figure(self):
         pass
