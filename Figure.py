@@ -14,6 +14,7 @@ class Figure:
         self.actual_display_pos = self.convert_to_display(self.actual_pos[0], self.actual_pos[1])
         self.image = p.image.load(image_path).convert_alpha()
         self.image = p.transform.scale(self.image, (int(BG_SIZE[0] / 8), int(BG_SIZE[0] / 8)))
+        self.field_frame = p.transform.scale(p.image.load("images/frame.png").convert_alpha(),(int(BG_SIZE[0] / 8), int(BG_SIZE[0] / 8)))
         self.image_path = image_path
         self.figure_id = figure_id
         self.circle_image = p.image.load("images/circle.png").convert_alpha()
@@ -28,12 +29,10 @@ class Figure:
             if chessboard.matrix[move[0]-1][move[1]-1].is_free:
                 screen.blit(self.circle_image, self.convert_to_display_circle(move[0], move[1]))
             else:
-                #TODO highlight attacked figure
-                pass
+                if chessboard.matrix[move[0]-1][move[1]-1].figure.color != self.color:
+                    screen.blit(self.field_frame, self.convert_to_display(move[0], move[1]))
 
     def make_move(self, x: int, y: int):
-        # chessboard.matrix[x-1][y-1].is_free = True
-        # chessboard.matrix[x-1][y-1].figure = None
         self.actual_pos = (x, y)
         self.actual_display_pos = self.convert_to_display(self.actual_pos[0], self.actual_pos[1])
 

@@ -50,3 +50,7 @@ class Game:
             chessboard.matrix[figure.actual_pos[0] - 1][figure.actual_pos[1] - 1].is_free = False
             chessboard.matrix[figure.actual_pos[0] - 1][figure.actual_pos[1] - 1].figure = figure
 
+        if self.player_turn == "white":
+            self.player_turn = "black"
+        elif self.player_turn == "black":
+            self.player_turn = "white"
