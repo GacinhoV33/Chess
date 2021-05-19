@@ -41,6 +41,11 @@ class Game:
         self.state = 0
 
     def update_chessboard(self, chessboard, figures):
+        for i in range(8):
+            for j in range(8):
+                chessboard.matrix[i][j].is_free = True
+                chessboard.matrix[i][j].figure = None
+
         for figure in figures:
             chessboard.matrix[figure.actual_pos[0] - 1][figure.actual_pos[1] - 1].is_free = False
             chessboard.matrix[figure.actual_pos[0] - 1][figure.actual_pos[1] - 1].figure = figure

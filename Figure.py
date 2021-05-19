@@ -31,9 +31,9 @@ class Figure:
                 #TODO highlight attacked figure
                 pass
 
-    def make_move(self, x: int, y: int, chessboard):
-        chessboard.matrix[x-1][y-1].is_free = True
-        chessboard.matrix[x-1][y-1].figure = None
+    def make_move(self, x: int, y: int):
+        # chessboard.matrix[x-1][y-1].is_free = True
+        # chessboard.matrix[x-1][y-1].figure = None
         self.actual_pos = (x, y)
         self.actual_display_pos = self.convert_to_display(self.actual_pos[0], self.actual_pos[1])
 

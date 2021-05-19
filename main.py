@@ -108,7 +108,7 @@ while True:
                 for column in Board.matrix:
                     for field in column:
                         if field.is_in_area(click_pos) and (field.x, field.y) in Actual_figure.possible_moves(Board):
-                            Actual_figure.make_move(field.x, field.y, Board)
+                            Actual_figure.make_move(field.x, field.y)
 
                             game.update_chessboard(Board, All_figures)
                             Actual_figure = None
@@ -117,8 +117,6 @@ while True:
                 if check_flag:
                     game.state = 0
                     Actual_figure = None
-
-
             else:
                 raise ValueError("ERROR")
             # game.state = "figure_chosen"
