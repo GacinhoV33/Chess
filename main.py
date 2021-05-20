@@ -104,8 +104,14 @@ while True:
                 for column in Board.matrix:
                     for field in column:
                         if field.is_in_area(click_pos) and (field.x, field.y) in Actual_figure.possible_moves(Board):
-                            Actual_figure.make_move(field.x, field.y, Board, All_figures)
-                            game.update_chessboard(Board, All_figures)
+                            if field.figure:
+                                if field.figure.color != Actual_figure.color:
+                                    Actual_figure.make_move(field.x, field.y, Board, All_figures)
+                                    game.update_chessboard(Board, All_figures)
+                            else:
+                                Actual_figure.make_move(field.x, field.y, Board, All_figures)
+                                game.update_chessboard(Board, All_figures)
+
                             Actual_figure = None
                             game.state = 0
                             check_flag = not check_flag

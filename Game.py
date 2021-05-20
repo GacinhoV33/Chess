@@ -4,7 +4,7 @@ This class represnts mechanics of game
 States:
 0 - beggining state, figure not chosen
 1 - figure chosen
-2 - place to go chosen
+
 
 Mechanics:
 
@@ -16,19 +16,11 @@ else:
 
 State 1:
 if clicked on figure that's belong to player:
-    stay in state 1 - change figure
+    stay in state 1 - change figure #TODO
 elif clicked on place where figure cannot go
     back to state 0
 elif clicked on figure which may be attacek or on free space where figure might go
-    go to state 2
-
-State 2:
-Update the chessboard
-Update score
-Make sound of killing or moving
-Change the player which is moving next move
-
-Go to state 0
+    go to state 0 and make move and update chessboard
 
 """
 

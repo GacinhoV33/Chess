@@ -33,7 +33,7 @@ class Figure:
                     screen.blit(self.field_frame, self.convert_to_display(move[0], move[1]))
 
     def make_move(self, x: int, y: int, chessboard, figures):
-        if not chessboard.matrix[x - 1][y - 1].is_free:
+        if not chessboard.matrix[x - 1][y - 1].is_free and chessboard.matrix[x-1][y-1].figure.color != self.color:
             pop_figure = chessboard.matrix[x-1][y-1].figure
             for num, figure in enumerate(figures):
                 if figure.figure_id == pop_figure.figure_id:
