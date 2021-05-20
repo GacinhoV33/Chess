@@ -14,23 +14,29 @@ class Bishop(Figure):
         while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] + i) and chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] + i - 1].is_free:
             poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] + i))
             i += 1
-
+        if self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] + i):
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] + i))
         i = 1
         while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] - i) and chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] - i - 1].is_free:
             poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] - i))
             i += 1
+        if self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] - i):
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] - i))
         i = 1
         while self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] - i) and \
                 chessboard.matrix[self.actual_pos[0] + i - 1][self.actual_pos[1] - i - 1].is_free:
             poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] - i))
             i += 1
-
+        if self.is_on_board(self.actual_pos[0] + i, self.actual_pos[1] - i):
+            poss_moves.append((self.actual_pos[0] + i, self.actual_pos[1] - i))
         i = 1
 
         while self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] + i) and \
                 chessboard.matrix[self.actual_pos[0] - i - 1][self.actual_pos[1] + i - 1].is_free:
             poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] + i))
             i += 1
+        if self.is_on_board(self.actual_pos[0] - i, self.actual_pos[1] + i):
+            poss_moves.append((self.actual_pos[0] - i, self.actual_pos[1] + i))
         return poss_moves
 
     def remove_figure(self):

@@ -57,7 +57,7 @@ Rook4 = Rook("black", "Rook H8", "images/figures/black_rook.png", 28, 8, 8)
 King1 = King("white", "KingE1", "images/figures/white_king.png", 29, 5, 1)
 King2 = King("black", "KingE8", "images/figures/black_king.png", 30, 5, 8)
 Queen1 = Queen("white", "QueenD1", "images/figures/white_queen.png", 31, 4, 1)
-Queen2 = Queen("white", "QueenD8", "images/figures/black_queen.png", 32, 4, 8)
+Queen2 = Queen("black", "QueenD8", "images/figures/black_queen.png", 32, 4, 8)
 
 White_pawns = [Pawn1, Pawn2, Pawn3, Pawn4, Pawn5, Pawn6, Pawn7, Pawn8]
 Black_pawns = [Pawn9, Pawn10, Pawn11, Pawn12, Pawn13, Pawn14, Pawn15, Pawn16]
@@ -81,10 +81,6 @@ for figure in All_figures:
 p.display.update()
 
 while True:
-    All_figures = [Pawn1, Pawn2, Pawn4, Pawn6, Pawn7, Pawn8,
-                   Pawn9, Pawn10, Pawn11, Pawn12, Pawn13, Pawn14, Pawn15, Pawn16,
-                   Knight1, Knight2, Knight3, Knight4, Bishop1, Bishop2, Bishop3, Bishop4,
-                   Queen1, Queen2, King1, King2, Rook1, Rook2, Rook3, Rook4]
 
     for event in p.event.get():
         if event.type == p.QUIT:
@@ -99,15 +95,16 @@ while True:
                         if field.is_in_area(click_pos) and not field.is_free:
                             print("detected: ", field.x, ":", field.y)
                             if field.figure.color == game.player_turn:
-                                Actual_figure = field.figure
-                                game.state = 1
+                                if field.figure.possible_moves(Board):
+                                    Actual_figure = field.figure
+                                    game.state = 1
 
             elif game.state == 1:
                 check_flag = True
                 for column in Board.matrix:
                     for field in column:
                         if field.is_in_area(click_pos) and (field.x, field.y) in Actual_figure.possible_moves(Board):
-                            Actual_figure.make_move(field.x, field.y)
+                            Actual_figure.make_move(field.x, field.y, Board, All_figures)
                             game.update_chessboard(Board, All_figures)
                             Actual_figure = None
                             game.state = 0

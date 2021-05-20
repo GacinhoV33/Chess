@@ -32,7 +32,12 @@ class Figure:
                 if chessboard.matrix[move[0]-1][move[1]-1].figure.color != self.color:
                     screen.blit(self.field_frame, self.convert_to_display(move[0], move[1]))
 
-    def make_move(self, x: int, y: int):
+    def make_move(self, x: int, y: int, chessboard, figures):
+        if not chessboard.matrix[x - 1][y - 1].is_free:
+            pop_figure = chessboard.matrix[x-1][y-1].figure
+            for num, figure in enumerate(figures):
+                if figure.figure_id == pop_figure.figure_id:
+                    figures.pop(num)
         self.actual_pos = (x, y)
         self.actual_display_pos = self.convert_to_display(self.actual_pos[0], self.actual_pos[1])
 
